@@ -1,0 +1,28 @@
+{
+  "armateur_id": "ARM123456",
+  "nom": "BlueWave Shipping Co.",
+  "adresse": "120 Quai des Navigateurs, 13002 Marseille, France",
+  "pays": "France",
+  "contact": {
+    "email": "info@bluewave-shipping.com",
+    "telephone": "+33 4 91 00 00 00"
+  },
+  "flotte": [
+    {
+      "imo": "9876543",
+      "nom": "BW Neptune",
+      "type": "Porte-conteneurs",
+      "pavillon": "France",
+      "tonnage_brut": 75000,
+      "année_construction": 2015
+    },
+    {
+      "imo": "8765432",
+      "nom": "BW Orion",
+      "type": "Vraquier",
+      "pavillon": "Malte",
+      "tonnage_brut": 92000,
+      "année_construction": 2012
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+armateur_id,nom,adresse,pays,email,telephone,imo,nom_navire,type,pavillon,tonnage_brut,annee_construction
+ARM123456,BlueWave Shipping Co.,"120 Quai des Navigateurs, 13002 Marseille",France,info@bluewave-shipping.com,+33 4 91 00 00 00,9876543,BW Neptune,Porte-conteneurs,France,75000,2015
+ARM123456,BlueWave Shipping Co.,"120 Quai des Navigateurs, 13002 Marseille",France,info@bluewave-shipping.com,+33 4 91 00 00 00,8765432,BW Orion,Vraquier,Malte,92000,2012

@@ -24,8 +24,7 @@ with open(file, "r", encoding="utf-8") as f:
 system_prompt = "extraction de données présentes dans des tableaux"
 user_prompt = f"""Voici le contenu d'un fichier Markdown. Extrait uniquement les tableaux de temps de transit**
 (Transit Times), et rends-les sous forme de tableaux lisibles csv. Ne commente pas, ne reformule pas.
-Markdown : {markdown_content}
-"""
+Markdown : {markdown_content}"""
 
 response = client.chat.completions.create(
     model="gpt-4",

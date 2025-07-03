@@ -18,8 +18,8 @@ prompt_LLM_fra = f"""Voici le contenu d'un fichier Markdown. Extrait uniquement 
 (Transit Times), et rends-les sous forme de tableaux lisibles .csv Ne commente pas, ne reformule pas.
 Markdown : {markdown_content}"""
 
-prompt_LLM = f"""This is a Markdown file. Extract only data and give them back to me on a readable
- .csv format. Don't comment and don't repharse. Above all else, do npt add information from outside the Markdown
+prompt_LLM = f"""This is a Markdown file. Extract only table and give them back to me on a readable
+ .csv format. Don't comment and don't repharse. Above all else, dont add information from outside the Markdown
 file ; Markdown : {markdown_content}""" #Transit Times'
 
 safe_prompt_LLM = shlex.quote(prompt_LLM)

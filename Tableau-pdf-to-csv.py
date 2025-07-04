@@ -7,7 +7,7 @@ import csv
 from pypdf import PdfReader, PdfWriter
 
 
-nom_fichier = "extract_ACSA%201_2" # que le nom (sans .pdf)
+nom_fichier = "extract_AGAPOME_2" # que le nom (sans .pdf)
 
 # Conversion pdf en Markdown
 
@@ -45,7 +45,7 @@ with open(input_file, "r", encoding="utf-8") as f:
 
 prompt_LLM = f"""This is a Markdown file. Extract only table and give them back to me on a readable
  .csv format. Don't comment and don't repharse. Above all else, dont add information from outside the Markdown
-file. Let the tables how they are in the Markdown ; Markdown : {markdown_content}""" #Transit Times'
+file. Let the tables how they are in the Markdown. when there is a line feed, it changes tables; Markdown : {markdown_content}""" #Transit Times'
 safe_prompt_LLM = shlex.quote(prompt_LLM)
 
 url = "http://ollama-sam.inria.fr/api/generate"

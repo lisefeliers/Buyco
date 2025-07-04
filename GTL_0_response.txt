@@ -1,21 +1,26 @@
- PORT,TERMINAL,ARRIVAL,DEPARTURE,Transit Day
-   THESSALONIKI,ThPA,SUN 07:00,TUE 07:00,DAY 0
-   PIRAEUS,ThPA,FRI 07:00,MON 05:00,5
-   LIMASSOL,PIRAEUS,FRI 05:00,MON 17:00,8
-   DAMIETTA\*,DCCH,TUE 10:00,WED 13:00,FRI 18:00,9
-   BEIRUT,BEIRUT,WED 13:00,THU 13:00,DAY 0,10
-   MERSIN,MERSIN,FRI 18:00,SAT 22:00,12
-   TRIPOLI,CMA,SUN 00:00,THU 00:00,14
-   MALTA,FREEPORT,THU 00:00,FRI 00:00,18
-   MISURATA,FREEPORT,WED 02:00,THU 02:00,20
+ The table from the given Markdown file is as follows:
 
-   From To,Thessaloniki,Piraeus,Limassol,Damietta,Beirut,Mersin,Tripoli,Malta,Misurata
-   Thessaloniki,-,3,6,7,8,10,12,16,18
-   Piraeus,22,-,2,3,4,6,8,12,14
-   Limassol,20,25,-,1,2,4,6,9,11
-   Damietta,19,24,26,-,1,3,5,8,10
-   Beirut,17,22,25,26,-,1,3,6,8
-   Mersin,14,19,22,24,25,-,-,4,6
-   Tripoli,13,18,21,23,24,26,-,3,5
-   Malta,3,8,11,12,13,16,17,-,-
-   Misurata,5,10,13,14,15,17,-,-
+```csv
+Port,Arrival,Departure,Transit Day,Terminal,Rotation
+Thessaloniki,SUN 07:00,TUE 07:00,DAY 0,ThPA
+Piraeus,FRI 07:00,SAT 07:00,5,EUROGATE
+Limassol,,MON 05:00,MON 17:00,DCCH
+Damietta,* Only during RF apple season,TUE 10:00,TUE 18:00,WED 13:00
+Beirut,TUE 18:00,TUE 18:00,THU 13:00
+Mersin,FRI 18:00,SAT 22:00,FRI 19:00
+Tripoli,SAT 22:00,TUE 07:00,FREEPORT
+Malta,TUE 07:00,FRI 07:00,FRI 19:00
+Misurata,,WED 02:00,THU 02:00,FREEPORT
+Thessaloniki,SUN 07:00,TUE 07:00,8
+Piraeus,FRI 07:00,SAT 07:00,9
+Limassol,,MON 05:00,MON 17:00,9
+Damietta,* Only during RF apple season,TUE 10:00,TUE 18:00,12
+Beirut,TUE 18:00,TUE 18:00,14
+Mersin,FRI 18:00,SAT 22:00,19
+Tripoli,SAT 22:00,TUE 07:00,24
+Malta,TUE 07:00,FRI 07:00,28
+Misurata,,WED 02:00,THU 02:00,26
+Thessaloniki Piraeus Limassol Damietta Beirut Mersin Tripoli Malta Misurata - ,22,20,19,17,14,3,5,3,-,25,24,22,19,18,8,10,6,2,-,26,24,23,12,14,8,4,3,1,-,25,24,13,15,10,12,6,4,3,1,-,26,16,17,8,6,5,3,-,-,17,19,16,12,9,8,6,4,3,-,-,18,14,11,10,8,6,5,-,-
+```
+
+The Rotation column indicates the 28-day rotation of the service.

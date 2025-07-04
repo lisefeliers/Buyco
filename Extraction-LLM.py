@@ -1,9 +1,9 @@
+import pdfplumber # extraire tableaus depuis fichier pdf
 import shlex # protection chaîne de caractère
 import requests # envoyer des requêtes HTTP
 import re # découper un texte à l'aide d'expressions singulières
 import json
 import csv
-from markitdown import MarkItDown
 
 
 
@@ -14,12 +14,26 @@ name_file = "GTL_0"
 input_file = f"pdfs/{name_file}.pdf" 
 output_file = f"{name_file}.md" 
 
-markitdown = MarkItDown()
+def pdf_tables_to_markdown(pdf_path, output_md):
+    # lit un fichier pdf avec des tableaux, les extraits et les convertit en markdown pui les auvegarde dans un fichier
+    with pdfplumber.open(pdf_path) as pdf, open(output_md, "w", encoding="utf-8") as f:
+        for page_num, page in enumerate(pdf.pages, 1):
+            tables = page.extract_tables()
+            print(f"Page {page_num}: {len(tables)} tables détectées")
+            for table in tables :
+                if not table or not table[0]: # vérifie que le tableau n'ets pas vide et qu'il a une en-tête
+                    continue  
+                md = ""
+                # En-tête Markdown
+                md += "| " + " | ".join(cell if cell is not None else "" for cell in table[0]) + " |\n" # .join(sépare les éléments de la liste par " | ")
+                md += "| " + " | ".join(["---"] * len(table[0])) + " |\n"
+                # Lignes du tableau
+                for row in table[1:]:
+                    md += "| " + " | ".join(cell if cell else "" for cell in row) + " |\n"
+                md += "\n\n"  # Ajoute 2 lignes vides entre chaque tableau pour bien les séparer
+                f.write(md)
 
-result = markitdown.convert(input_file) #"test.pdf" 
-
-with open(output_file, "w", encoding="utf-8") as file:
-    file.write(result.text_content)
+pdf_tables_to_markdown(input_file, output_file)
 
 
 
@@ -33,8 +47,7 @@ with open(input_file, "r", encoding="utf-8") as f:
 
 
 prompt_LLM = f"""This is a Markdown file. Extract only table and give them back to me on a readable
- .csv format. Don't comment and don't repharse. Above all else, dont add information from outside the Markdown
-file. Lets the tables how there are in the Markdown ; Markdown : {markdown_content}""" #Transit Times'
+ .csv format. ; Markdown : {markdown_content}""" #Transit Times'
 
 safe_prompt_LLM = shlex.quote(prompt_LLM) # évite que le prompt ne soit déformé
 

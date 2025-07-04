@@ -1,7 +1,7 @@
 # Buyco
 
 ### a) 
-Buyco est une plateforme d'expédition de conteneurs pour chargeurs. Afin de répondre aux besoins des clients, la plateforme doit analyser les différentes carrières qui permettent d'aller d'un point A à un point B et en combien de temps. Pour ça, elle s'informe sur les sites des différentes compagnies de transport maritime. Elle cherche donc a créer une base de donnéees regroupant toutes les informations nécessaires pour y avoir accès rapidement. La base de données doit aussi se mettre à jour régulièrement pour ne pas donner de fausses informations. Il faut donc : créer cette base de données et récupérer les informations sur les sites pour la remplir, ces informations peuvent être sous la forme de PDF, CSV, API ou autre.
+Buyco est une plateforme d'expédition de conteneurs pour chargeurs. Afin de répondre aux besoins des clients, la plateforme doit analyser les différents carrieurs qui permettent d'aller d'un point A à un point B et en combien de temps. Pour ça, elle s'informe sur les sites des différentes compagnies de transport maritime. Elle cherche donc a créer une base de donnéees regroupant toutes les informations nécessaires pour y avoir accès rapidement. La base de données doit aussi se mettre à jour régulièrement pour ne pas donner de fausses informations. Il faut donc : créer cette base de données et récupérer les informations sur les sites pour la remplir, ces informations peuvent être sous la forme de PDF, CSV, API ou autre.
 
 ### b) 
 ### Extraction des informations des sites :   

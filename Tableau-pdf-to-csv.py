@@ -4,13 +4,14 @@ import requests
 import re
 import json
 import csv
+from pypdf import PdfReader, PdfWriter
 
 
-nom_fichier = "WAX_0"
+nom_fichier = "extract_AGAPOME_2" # que le nom (sans .pdf)
 
 # Conversion pdf en Markdown
 
-input_file = f"pdfs/{nom_fichier}.pdf" 
+input_file = f"pdfs_extraits\{nom_fichier}.pdf" 
 output_file = f"{nom_fichier}.md" 
 
 def pdf_tables_to_markdown(pdf_path, output_md):
@@ -44,7 +45,7 @@ with open(input_file, "r", encoding="utf-8") as f:
 
 prompt_LLM = f"""This is a Markdown file. Extract only table and give them back to me on a readable
  .csv format. Don't comment and don't repharse. Above all else, dont add information from outside the Markdown
-file ; Markdown : {markdown_content}""" #Transit Times'
+file. Let the tables how they are in the Markdown. when there is a line feed, it changes tables; Markdown : {markdown_content}""" #Transit Times'
 safe_prompt_LLM = shlex.quote(prompt_LLM)
 
 url = "http://ollama-sam.inria.fr/api/generate"
@@ -61,8 +62,34 @@ with open(output_file, "w", encoding="utf-8") as out_file:
 
 # Traitement du fichier .txt donné en réponse par le LLM
 
+input_file = f"{nom_fichier}.txt"
+response_file = f"{nom_fichier}_response.txt"
+output_file = f"{nom_fichier}_table.csv"
+
+responses = []
+with open(input_file, "r", encoding="utf-8") as text_file:
+    for line in text_file:
+        try:
+            obj = json.loads(line.strip())
+            if "response" in obj:
+                responses.append(obj["response"])
+        except json.JSONDecodeError:
+            continue
+
+full_text = "".join(responses)
+full_text = full_text.replace('"""', '').replace('"', '')
+
+with open(response_file, "w", encoding="utf-8") as file:
+    file.write(full_text)
 
 
+# Conversion du fichier .txt amélioré en fichier .csv
+lines = [line.strip() for line in full_text.strip().splitlines() if line.strip()]
+
+with open(output_file, "w", newline="", encoding="utf-8") as csv_file:
+    writer = csv.writer(csv_file)
+    for line in lines:
+        writer.writerow(line.split(","))
 
 # Vérification que le model LLM n'invente pas des données et fais simplement de l'extraction de données
 # Faire un test de vérification

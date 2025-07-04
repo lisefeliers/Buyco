@@ -10,7 +10,7 @@ from markitdown import MarkItDown
 
 # Conversion pdf en Markdown
 
-name_file = "ALGA"
+name_file = "GTL_0"
 input_file = f"pdfs/{name_file}.pdf" 
 output_file = f"{name_file}.md" 
 

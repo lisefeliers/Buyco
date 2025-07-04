@@ -31,4 +31,4 @@ ATTENTION: Le code ne fonctionne que sur mon PC car la database est en local (vo
 - sqlalchemy.orm : 1.2.10
 
 ### d)
-
+request

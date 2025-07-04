@@ -1,0 +1,95 @@
+import numpy as np
+import pdfplumber
+import pandas as pd
+
+
+
+chemin_pdf = "pdfs/WAX3.pdf"
+with pdfplumber.open(chemin_pdf) as pdf:
+    toutes_les_lignes = []
+    page = pdf.pages[1]
+    tableaux = page.extract_tables({
+    "vertical_strategy": "text",
+    "horizontal_strategy": "text",
+    "snap_tolerance": 3,
+    "join_tolerance": 3,
+    "edge_min_length": 3
+})
+    for tableau in tableaux:
+        for ligne in tableau:
+                toutes_les_lignes.append(ligne)
+
+
+df = pd.DataFrame(toutes_les_lignes)
+
+
+df.to_csv("WAX3.csv", index=True, header=True)
+
+
+
+def extraire_sections(df):
+    indices_from_to = df.index[df[0].astype(str).str.contains(r'\b(From\s+.*\s+To|To\s+.*\s+From)\b', regex=True, case=False)].tolist()
+    indices_head_office = df.index[df[0] == 'HEAD OFFICE'].tolist()
+    if len(indices_from_to) < 2:
+        print("La DataFrame doit contenir  au moins trois lignes 'From To'")
+    if len(indices_head_office) < 1:
+        print("La DataFrame doit contenir  au moins une ligne 'HEAD OFFICE'")
+    
+    print(indices_from_to)
+    debut_villes_p1 = indices_from_to[1] + 1
+    fin_villes_p1 = indices_from_to[2] - 1
+    
+    debut_villes_p2 = indices_from_to[2] + 1
+    fin_villes_p2 = indices_head_office[0]- 1
+    
+    df_villes_p1 = df.loc[debut_villes_p1:fin_villes_p1].reset_index(drop=True)
+    df_villes_p2 = df.loc[debut_villes_p2:fin_villes_p2].reset_index(drop=True)
+    
+    return df_villes_p1, df_villes_p2
+
+df_villes_p1, df_villes_p2 = extraire_sections(df)
+
+
+
+df = pd.concat([df_villes_p1, df_villes_p2], axis=0)
+
+df = df.set_index(df.columns[0])
+df = df.reset_index()
+
+
+
+def split_lignes(df):
+    port_col = df.columns[0]
+    new_rows = []
+    for _, row in df.iterrows():
+        cell_value = row[port_col]
+        if isinstance(cell_value, str) and '\n' in cell_value:
+            port_names = cell_value.split('\n')
+            n_ports = len(port_names)
+            split_columns = []
+            for cell in row[1:]:  
+                if isinstance(cell, str) and '\n' in cell:
+                    parts = cell.split('\n')
+                    if len(parts) == n_ports:
+                        split_columns.append(parts)
+                    else:
+                        split_columns.append([None]*n_ports)
+                else:
+                    split_columns.append([cell]*n_ports)
+            for i in range(n_ports):
+                new_row = [port_names[i]] + [col[i] for col in split_columns]
+                new_rows.append(new_row)
+        else:
+            new_rows.append(row.tolist())
+    df_clean = pd.DataFrame(new_rows, columns=df.columns).reset_index(drop=True)
+    return df_clean
+
+
+df = split_lignes(df)
+#print(df)
+
+
+Ls_ports = df.iloc[:,0]
+print(Ls_ports)
+
+

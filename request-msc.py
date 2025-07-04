@@ -12,9 +12,8 @@ with sync_playwright() as playwright:
     page.goto("https://www.msc.com/fr/search-a-schedule")
     try:
         page.locator("button:has-text('Accepter')").click(timeout=5000)
-        print("✅ Cookies acceptés.")
     except:
-        print("⚠️ Aucun popup cookies détecté (ou déjà accepté).")
+        print("Aucun popup cookies détecté (ou déjà accepté).")
 
     page.locator("button:has-text('Navire')").click()
     page.wait_for_timeout(2000)
@@ -30,16 +29,18 @@ with sync_playwright() as playwright:
     suggestion_selector = 'button[x-on\\:click\\.prevent^="selectVessel"]'
     page.wait_for_selector(suggestion_selector, timeout=5000)
     page.click(suggestion_selector)
-    print("✅ Navire sélectionné.")
 
     html = page.content()
     soup = BeautifulSoup(html, "html.parser")
-    # 🔥 Extraire les ports affichés dynamiquement
-    ports = page.locator("span.data-value.text-capitalize").all_inner_texts()
 
-    print("📍 Ports trouvés :")
+    page.wait_for_timeout(5000)
+
+    # Récupérer tous les noms de ports visibles
+    port_elements = page.locator('span.data-value.text-capitalize[x-text^="entry.PortName"]')
+    ports = port_elements.all_inner_texts()
+
+    print("Ports trouvés :")
     for port in ports:
-        print("-", port.strip())
-
+        print(port)
 
     browser.close()

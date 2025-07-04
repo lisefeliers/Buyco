@@ -1,47 +1,55 @@
-from playwright.sync_api import sync_playwright
+import requests
+import time
+import random
 import json
+import csv
+from bs4 import BeautifulSoup
 
-def search_msc_by_imo(imo: str):
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        context = browser.new_context(locale="fr-FR")
-        page = context.new_page()
 
-        # Stocke la réponse capturée
-        captured_response = {}
+def get_data(fichier):
+    with open(fichier, "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-        def handle_response(response):
-            if "SearchLiveSchedule" in response.url and response.status == 200:
-                try:
-                    data = response.json()
-                    captured_response["data"] = data
-                except:
-                    captured_response["data"] = "Erreur JSON"
+    vessel_names = []
+    vessel_maersk_codes = []
+    vessel_imo_codes = []
 
-        page.on("response", handle_response)
+    for vessel in data["vessels"]:
+        name = vessel.get("vesselName")
+        code = vessel.get("vesselMaerskCode")
+        imo = vessel.get("vesselIMONumber")
 
-        # Va sur MSC pour obtenir cookies/session
-        page.goto("https://www.msc.com/fr", wait_until="networkidle")
+        if name and code and imo:
+            vessel_names.append(name)
+            vessel_maersk_codes.append(code)
+            vessel_imo_codes.append(imo)
+    return vessel_names,vessel_maersk_codes,vessel_imo_codes
 
-        # Envoie la requête via JS dans le contexte navigateur
-        page.evaluate(f"""
-            fetch("https://www.msc.com/api/feature/tools/SearchLiveSchedule", {{
-                method: "POST",
-                headers: {{
-                    "Content-Type": "application/json"
-                }},
-                body: JSON.stringify({{"VesselIMONumber":"{imo}","language":"fr-FR"}})
-            }})
-        """)
 
-        # Attend 5 secondes pour laisser le temps à la réponse d'arriver
-        page.wait_for_timeout(5000)
-        browser.close()
 
-        if "data" in captured_response:
-            print(json.dumps(captured_response["data"], indent=2, ensure_ascii=False))
-        else:
-            print("❌ Aucune réponse capturée (possible blocage JS ou CORS)")
+vessel_names,vessel_maersk_codes,vessel_imo_codes=get_data("active-vessels-maerks.json")
 
-# Utilisation
-search_msc_by_imo("9229829")
+def request(L1,L2,L3):
+    fichier_csv="maerks.csv"
+
+    with open(fichier_csv, mode='w', newline='', encoding='utf-8') as fichier:
+        writer = csv.writer(fichier)
+
+        for i,vessel_code in enumerate(L2):
+            url = f"https://www.maersk.com/schedules/vesselSchedules?vesselCode={vessel_code}&fromDate=2025-07-05"
+            headers = {"User-Agent": "Mozilla/5.0","Accept": "application/json"}
+
+            response = requests.get(url, headers=headers,timeout=1)
+            time.sleep(random.uniform(1, 1.5))
+
+        soup = BeautifulSoup(response.content, "html.parser")
+
+        Ports = [
+            a.get_text(strip=True)
+            for a in soup.find_all("a", href=True)
+            if "fromDate=2025-07-05" in a["href"]
+        ]
+        writer.writerow(['maerks',None,None,None,Ports,None,L1[i],L3[i]])
+
+
+request(vessel_names,vessel_maersk_codes,vessel_imo_codes)

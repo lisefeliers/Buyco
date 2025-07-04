@@ -1,5 +1,5 @@
 import requests
-import json
+import csv
 import time
 import random
 
@@ -179,30 +179,38 @@ cosco_vessels_code=[
   "CFJ", "CKA", "CNB", "CNC", "CND", "CNE", "CNF", "CNT", "COE", "CSB", "CSC", "CSD", "CSE",
   "CSF", "CSG", "CSH", "CSI", "CSJ", "CSK"
 ]
+def request(L1,L2):
+    fichier_csv="cosco.csv"
 
-D={}
-for vessel_code in cosco_vessels_code:
-    D[f"{vessel_code}"]=[]
-    url = f"https://elines.coscoshipping.com/ebschedule/public/purpoShipment/vesselCode?vesselCode={vessel_code}&period=28"
-    headers = {"User-Agent": "Mozilla/5.0","Accept": "application/json"}
+    with open(fichier_csv, mode='w', newline='', encoding='utf-8') as fichier:
+        writer = csv.writer(fichier)
 
-    response = requests.get(url, headers=headers,timeout=1)
-    time.sleep(random.uniform(1, 3))
+        for i,vessel_code in enumerate(L2):
+            url = f"https://elines.coscoshipping.com/ebschedule/public/purpoShipment/vesselCode?vesselCode={vessel_code}&period=28"
+            headers = {"User-Agent": "Mozilla/5.0","Accept": "application/json"}
 
-    if response.status_code == 200:
-        try:
-            data = response.json()
-            escales = data["data"]["content"]["data"]  # ← accès corrigé
-            
-            for escale in escales:
-                port = escale.get("protName")
-                D[f"{vessel_code}"].append(f"{port}")
-                print(f"{port}")
-        except Exception as e:
-            print(f"Erreur de parsing : {e}")
-            time.sleep(10)
-    else:
-        print(f"Erreur HTTP {response.status_code}")
-        time.sleep(60)
+            response = requests.get(url, headers=headers,timeout=1)
+            time.sleep(random.uniform(9, 11))
 
-print(D)
+            if response.status_code == 200:
+                Ports=[]
+                try:
+                    data = response.json()
+                    escales = data["data"]["content"]["data"]
+                    
+                    for escale in escales:
+                        port = escale.get("protName")
+                        Ports.append(f"{port}")
+                        print(f"{port}")
+                    writer.writerow(['cosco',None,None,None,Ports,None,L1[i],vessel_code])
+                except Exception as e:
+                    print(f"Erreur de parsing : {e}")
+                    writer.writerow(['cosco',None,None,None,'Error',None,L1[i],vessel_code])
+                    time.sleep(10)
+            else:
+                print(f"Erreur HTTP {response.status_code}")
+                writer.writerow(['cosco',None,None,None,'Error',None,L1[i],vessel_code])
+                time.sleep(60)
+
+
+request(cosco_vessels,cosco_vessels_code)

@@ -8,6 +8,12 @@ Buyco est une plateforme d'expédition de conteneurs pour chargeurs. Afin de ré
 
 Pour ce qui est des requêtes POST, nous avons eu l'idée d'utiliser le module request sous python. Mais certains sites stockent tout en front end il n'y a pas de request POST qui va s'addresser au back. On a donc contourner ce problème par plusieurs moyens différents selon les sites.
 
+Sur le site de COSCO on arrive à trouver en inspectant le site l'appel à l'API. On récupère alors ce lien et on peut directement récupérer le résultat de cette requête en faisant une requête GET en python. Le résultat est sous la forme d'un JSON qu'on peut exploiter facilement. Le problème majeur est que nos requêtes sont vites bloquées même si on ajoute des délais randoms.
+
+Un autre type d'extraction utilisé pour les sites de MSC et de Maerks est l'utilisation de la librairie Playwright. On simule un vrai navigateur pour récupèrer le contenu affiché dynamiquement par les sites. C'est un procédé assez long et qui ne se généralise pas à tous les sites facilement. Pourtant il est efficace et semble permettre de faire plus de requête. Un simple appel d'API n'est pas possible car leur API est bloqué.
+
+Pour généraliser aux 10 plus gros armateurs il faut prendre en compte les particularités des autres sites. Certains présentes des fichiers excel pour chaque service, donc facilement exploitable. D'autres mettent en place des captchas qui bloquent toutes tentatives peu sophistiquées de scraping. Certains ont un système de requête par destinations de départ et d'arrivée ce qui implique de modifier la logique de nos codes précédents.
+
 ### Extraction des informations des fichiers (PDF) : 
 Nous nous sommes attardés sur les données de CMA CGM qui sont sous format PDF : les données qui nous intéressent sont dans des tableaux de la deuxième page. Nous avons décidé d'utiliser un LLM : d'abord on passe l'ensemble du PDF en Markdown que l'on donne ensuite au LLM pour qu'il nous retourne les données importantes dans la structure d'un tableau au format CSV. 
 

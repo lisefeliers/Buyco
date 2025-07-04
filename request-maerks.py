@@ -40,16 +40,16 @@ def request(L1,L2,L3):
             headers = {"User-Agent": "Mozilla/5.0","Accept": "application/json"}
 
             response = requests.get(url, headers=headers,timeout=1)
+            print(response)
             time.sleep(random.uniform(1, 1.5))
 
-        soup = BeautifulSoup(response.content, "html.parser")
-
-        Ports = [
-            a.get_text(strip=True)
-            for a in soup.find_all("a", href=True)
-            if "fromDate=2025-07-05" in a["href"]
-        ]
-        writer.writerow(['maerks',None,None,None,Ports,None,L1[i],L3[i]])
+            soup = BeautifulSoup(response.content, "html.parser")
+            Ports = [
+                a.get_text(strip=True)
+                for a in soup.find_all("a", href=True)
+                if "fromDate=2025-07-05" in a["href"]
+            ]
+            writer.writerow(['maerks',None,None,None,Ports,None,L1[i],L3[i]])
 
 
 request(vessel_names,vessel_maersk_codes,vessel_imo_codes)

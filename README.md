@@ -12,4 +12,11 @@ Buyco est une plateforme d'expédition de conteneurs pour chargeurs. Afin de ré
 Nous nous sommes attardés sur les données de CMA CGM qui sont sous format PDF : les données qui nous intéressent sont dans des tableaux de la deuxième page. Nous avons décidé d'utiliser un LLM : d'abord on passe l'ensemble du PDF en Markdown que l'on donne ensuite au LLM pour qu'il nous retourne les données importantes dans la structure d'un tableau au format CSV. 
 
 ### c) 
-- 
+- pdfplumber : 0.11.7
+- requests : 2.32.3
+- pypdf : 5.7.0
+- sqlalchemy : 2.0.39
+- sqlalchemy.orm : 1.2.10
+
+### d)
+

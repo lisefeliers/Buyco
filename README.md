@@ -32,5 +32,3 @@ ATTENTION: Le code ne fonctionne que sur mon PC car la database est en local (vo
 
 ### d)
 
-Il faut exécuter le notebook 'projet-final.ipynb' qui ira chercher les pdfs dans le dossier 'pdfs'.
-

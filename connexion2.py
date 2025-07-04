@@ -5,7 +5,7 @@ engine = create_engine('mysql+pymysql://root:rootinfo8988*Mines@localhost:3306/a
 
 # csv
 with engine.connect() as con:
-    with open('../cosco.csv', 'r', encoding='utf-8') as file:
+    with open('../msc_vrai.csv', 'r', encoding='utf-8') as file:
         lecteur = csv.reader(file)
         
           
@@ -20,7 +20,7 @@ with engine.connect() as con:
 
             
             query = text("""
-                INSERT INTO data5 (name_carrier, code_route, name_route, port_code, port_name, terminal, vessels, vessels_code)
+                INSERT INTO data6 (name_carrier, code_route, name_route, port_code, port_name, terminal, vessels, vessels_code)
                 VALUES (:name_carrier, :code_route, :name_route, :port_code, :port_name, :terminal, :vessels, :vessels_code)
             """)
             con.execute(query, {

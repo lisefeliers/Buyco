@@ -33,4 +33,5 @@ ATTENTION: Le code ne fonctionne que sur mon PC car la database est en local (vo
 ### d)
 
 Il faut exécuter le notebook 'projet-final.ipynb' qui ira chercher les pdfs dans le dossier 'pdfs'.
+Les codes qui permettent de récupérer les fichiers des sites des transporteurs ont un très grand temps d'exécution. Ils ne sont donc pas dans le notebook, mais dans 'extraction-pdf.ipynb'.
 

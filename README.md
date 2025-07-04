@@ -14,6 +14,7 @@ Nous nous sommes attardés sur les données de CMA CGM qui sont sous format PDF 
 ### Base de données :   
 
 Nous avons commencé par uniquement installer des extensions sur vscode ainsi que mysql Workbench. Après avoir rencontré plusieurs difficultés, Nous avons décidé d'installer un server MySQL local. Pour communiquer avec la db, les requêtes SQL directement via le Workbench ne fonctionnaient pas. Nous avons donc prit la décision de communiquer avec la db sous python via le module SQLAlchemy. Il y a un script de création de table et un script ou on insert les données dans la database. Les données sont bien dans la database , ou peut même le vérifier par le Workbench 
+ATTENTION: Le code ne fonctionne que sur mon PC car la database est en local (vous voyez par ailleurs mon mot de passe en clair). Si vous voulez exec le code, il faut créer un serveur local en modifiant quelques lignes.
 
 
 ### c) 

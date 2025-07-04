@@ -1,15 +1,14 @@
 import csv
 from sqlalchemy import create_engine, text
 
-# Connexion à la base de données
 engine = create_engine('mysql+pymysql://root:rootinfo8988*Mines@localhost:3306/app', echo=True)
 
-# Lecture du fichier CSV et insertion dans la base
+# csv
 with engine.connect() as con:
     with open('../exemple.csv', 'r', encoding='utf-8') as file:
         lecteur = csv.reader(file)
         
-        next(lecteur)  # Ignore l'en-tête
+        next(lecteur)  
 
         for ligne in lecteur:
             print(ligne)
@@ -17,21 +16,22 @@ with engine.connect() as con:
                 print("Ligne incomplète :", ligne)
                 continue
 
-            id_carrier, code_route, name_route, port_code, port_name, terminal, vessels = ligne[0],ligne[1],ligne[2],ligne[3],ligne[4],ligne[5],ligne[6]
+            name_carrier, code_route, name_route, port_code, port_name, terminal, vessels,vessels_code = ligne[0],ligne[1],ligne[2],ligne[3],ligne[4],ligne[5],ligne[6],ligne[7]
 
-            # Exemple de requête d'insertion, adapte selon ta table réelle
+            
             query = text("""
-                INSERT INTO data (id_carrier, code_route, name_route, port_code, port_name, terminal, vessels)
-                VALUES (:id_carrier, :code_route, :name_route, :port_code, :port_name, :terminal, :vessels)
+                INSERT INTO data2 (name_carrier, code_route, name_route, port_code, port_name, terminal, vessels, vessels_code)
+                VALUES (:name_carrier, :code_route, :name_route, :port_code, :port_name, :terminal, :vessels, vessels_code)
             """)
             con.execute(query, {
-                'id_carrier': id_carrier,
+                'id_carrier': name_carrier,
                 'code_route': code_route,
                 'name_route': name_route,
                 'port_code': port_code,
                 'port_name': port_name,
                 'terminal': terminal,
-                'vessels': vessels
+                'vessels': vessels,
+                'vessels_code':vessels_code
             })
 
     con.commit()

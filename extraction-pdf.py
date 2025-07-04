@@ -1,95 +1,39 @@
-import numpy as np
-import pdfplumber
-import pandas as pd
+import requests
+from bs4 import BeautifulSoup
+import os
+from urllib.parse import urljoin
+import time
 
+# URL de la page contenant les liens vers les PDF
+url_page = "https://www.cma-cgm.fr/produits-services/plaquettes"
 
+# Dossier de destination pour les PDF téléchargés
+os.makedirs("pdfs_bis", exist_ok=True)
 
-chemin_pdf = "pdfs/WAX3.pdf"
-with pdfplumber.open(chemin_pdf) as pdf:
-    toutes_les_lignes = []
-    page = pdf.pages[1]
-    tableaux = page.extract_tables({
-    "vertical_strategy": "text",
-    "horizontal_strategy": "text",
-    "snap_tolerance": 3,
-    "join_tolerance": 3,
-    "edge_min_length": 3
-})
-    for tableau in tableaux:
-        for ligne in tableau:
-                toutes_les_lignes.append(ligne)
+# Récupération de la page HTML
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+    "Accept-Language": "en-US,en;q=0.9"
+}
 
+response = requests.get("https://www.cma-cgm.fr/produits-services/plaquettes", headers=headers)
+print(response)
+soup = BeautifulSoup(response.content, "html.parser")
+count=0
 
-df = pd.DataFrame(toutes_les_lignes)
+# Recherche de tous les liens PDF
+for link in soup.find_all("a", href=True):
+    href = link["href"]
+    if href.lower().endswith(".pdf"):
+        count+=1
+        time.sleep(1)
+        if count==10:
+            count=0
+            time.sleep(60)
+        pdf_url = urljoin(url_page, href)  # gère les liens relatifs
+        pdf_name = os.path.basename(href)
+        pdf_path = os.path.join("pdfs_bis", pdf_name)
 
-
-df.to_csv("WAX3.csv", index=True, header=True)
-
-
-
-def extraire_sections(df):
-    indices_from_to = df.index[df[0].astype(str).str.contains(r'\b(From\s+.*\s+To|To\s+.*\s+From)\b', regex=True, case=False)].tolist()
-    indices_head_office = df.index[df[0] == 'HEAD OFFICE'].tolist()
-    if len(indices_from_to) < 2:
-        print("La DataFrame doit contenir  au moins trois lignes 'From To'")
-    if len(indices_head_office) < 1:
-        print("La DataFrame doit contenir  au moins une ligne 'HEAD OFFICE'")
-    
-    print(indices_from_to)
-    debut_villes_p1 = indices_from_to[1] + 1
-    fin_villes_p1 = indices_from_to[2] - 1
-    
-    debut_villes_p2 = indices_from_to[2] + 1
-    fin_villes_p2 = indices_head_office[0]- 1
-    
-    df_villes_p1 = df.loc[debut_villes_p1:fin_villes_p1].reset_index(drop=True)
-    df_villes_p2 = df.loc[debut_villes_p2:fin_villes_p2].reset_index(drop=True)
-    
-    return df_villes_p1, df_villes_p2
-
-df_villes_p1, df_villes_p2 = extraire_sections(df)
-
-
-
-df = pd.concat([df_villes_p1, df_villes_p2], axis=0)
-
-df = df.set_index(df.columns[0])
-df = df.reset_index()
-
-
-
-def split_lignes(df):
-    port_col = df.columns[0]
-    new_rows = []
-    for _, row in df.iterrows():
-        cell_value = row[port_col]
-        if isinstance(cell_value, str) and '\n' in cell_value:
-            port_names = cell_value.split('\n')
-            n_ports = len(port_names)
-            split_columns = []
-            for cell in row[1:]:  
-                if isinstance(cell, str) and '\n' in cell:
-                    parts = cell.split('\n')
-                    if len(parts) == n_ports:
-                        split_columns.append(parts)
-                    else:
-                        split_columns.append([None]*n_ports)
-                else:
-                    split_columns.append([cell]*n_ports)
-            for i in range(n_ports):
-                new_row = [port_names[i]] + [col[i] for col in split_columns]
-                new_rows.append(new_row)
-        else:
-            new_rows.append(row.tolist())
-    df_clean = pd.DataFrame(new_rows, columns=df.columns).reset_index(drop=True)
-    return df_clean
-
-
-df = split_lignes(df)
-#print(df)
-
-
-Ls_ports = df.iloc[:,0]
-print(Ls_ports)
-
-
+        print(f"Téléchargement : {pdf_url}")
+        with open(pdf_path, "wb") as f:
+            f.write(requests.get(pdf_url).content)
